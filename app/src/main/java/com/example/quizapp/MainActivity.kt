@@ -1,29 +1,30 @@
-package com.example.quizapp
+package com.example.quizapp // Confirme seu pacote
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.quizapp.ui.theme.QuizAppTheme
+
+// Enum para controlar em qual tela o usuário está
+enum class TelaAtual {
+    INICIAL, QUIZ, FINAL
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             QuizAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppQuiz()
                 }
             }
         }
@@ -31,17 +32,41 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun AppQuiz() {
+    // Variáveis de estado pra controlar a navegação e os dados do jogo
+    var telaAtual by remember { mutableStateOf(TelaAtual.INICIAL) }
+    var nivelSelecionado by remember { mutableStateOf(NivelDificuldade.FACIL) }
+    var pontuacaoFinal by remember { mutableIntStateOf(0) }
+    var totalDePerguntas by remember { mutableIntStateOf(0) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuizAppTheme {
-        Greeting("Android")
+    // Qual tela é exibida com base no estado 'telaAtual'
+    when (telaAtual) {
+        TelaAtual.INICIAL -> {
+            TelaInicial(
+                aoClicarEmIniciar = { nivel ->
+                    nivelSelecionado = nivel
+                    telaAtual = TelaAtual.QUIZ
+                }
+            )
+        }
+        TelaAtual.QUIZ -> {
+            TelaQuiz(
+                nivelEscolhido = nivelSelecionado,
+                aoFinalizarQuiz = { pontuacao, total ->
+                    pontuacaoFinal = pontuacao
+                    totalDePerguntas = total
+                    telaAtual = TelaAtual.FINAL
+                }
+            )
+        }
+        TelaAtual.FINAL -> {
+            TelaFinal(
+                pontuacaoFinal = pontuacaoFinal,
+                totalDePerguntas = totalDePerguntas,
+                aoReiniciarQuiz = {
+                    telaAtual = TelaAtual.INICIAL
+                }
+            )
+        }
     }
 }
