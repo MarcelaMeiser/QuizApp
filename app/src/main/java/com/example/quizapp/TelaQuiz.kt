@@ -17,7 +17,7 @@ fun TelaQuiz(
     nivelEscolhido: NivelDificuldade,
     aoFinalizarQuiz: (pontuacaoFinal: Int, totalDePerguntas: Int) -> Unit
 ) {
-    // Filtra pelo nível e embaralha as perguntas uma única vez [cite: 140, 169, 174]
+    // Filtra pelo nível e embaralha as perguntas uma única vez
     val perguntasFiltradas = remember {
         listaDeTodasAsPerguntas.filter { it.nivel == nivelEscolhido }.shuffled()
     }
@@ -29,7 +29,7 @@ fun TelaQuiz(
 
     val perguntaAtual = perguntasFiltradas[indiceAtual]
 
-    // Embaralha as opções da pergunta atual [cite: 175]
+    // Embaralha as opções da pergunta atual
     val opcoesEmbaralhadas = remember(perguntaAtual) {
         perguntaAtual.listaDeOpcoes.shuffled()
     }
@@ -48,8 +48,8 @@ fun TelaQuiz(
         opcoesEmbaralhadas.forEach { opcao ->
             val corFundo = if (jaRespondeu) {
                 when {
-                    opcao == perguntaAtual.respostaCorreta -> Color.Green.copy(alpha = 0.3f) // [cite: 176]
-                    opcao == opcaoSelecionada -> Color.Red.copy(alpha = 0.3f) // [cite: 176]
+                    opcao == perguntaAtual.respostaCorreta -> Color.Green.copy(alpha = 0.3f)
+                    opcao == opcaoSelecionada -> Color.Red.copy(alpha = 0.3f)
                     else -> Color.Transparent
                 }
             } else {
@@ -79,7 +79,7 @@ fun TelaQuiz(
                         pontuacao++
                     }
                 },
-                enabled = opcaoSelecionada.isNotEmpty() // Impede avançar sem responder [cite: 177]
+                enabled = opcaoSelecionada.isNotEmpty()
             ) {
                 Text(text = "Confirmar", fontSize = 20.sp)
             }

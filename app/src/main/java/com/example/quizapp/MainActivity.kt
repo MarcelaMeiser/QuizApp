@@ -1,4 +1,4 @@
-package com.example.quizapp // Confirme seu pacote
+package com.example.quizapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
